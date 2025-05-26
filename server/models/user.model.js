@@ -4,14 +4,14 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
+    clerkId: {
+      type: String,
       required: true,
+      unique: true,
     },
     username: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
       minlength: 3,
     },
@@ -31,17 +31,15 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "hotelOwner", "admin"],
       default: "user",
     },
-    recentSearcheCities: [
+    recentSearchedCities: [
       {
         type: String,
         required: true,
       },
     ],
   },
-
   { timestamps: true }
 );
 
 const User = mongoose.model("User", userSchema);
 export default User;
-// This code defines a Mongoose schema for a User model in a Node.js application.

@@ -20,7 +20,7 @@ app.use(clerkMiddleware());
 app.use("/api/clerk", clearkWebhooks);
 
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.send("Hello, bhai!");
 });
 
 app.listen(PORT, () => {

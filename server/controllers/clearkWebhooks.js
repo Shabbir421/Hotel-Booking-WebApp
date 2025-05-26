@@ -5,51 +5,58 @@ import { Webhook } from "svix";
 
 const clearkWebhooks = async (req, res) => {
   try {
-    //create a new webhook instance with the secret
-    const whook = new Webhook(process.env.CLEAR_WEBHOOK_SECRET);
+    // Create a new webhook instance with the Clerk secret
+    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET); // spelling fix
 
     const headers = {
       "svix-id": req.headers["svix-id"],
       "svix-timestamp": req.headers["svix-timestamp"],
       "svix-signature": req.headers["svix-signature"],
     };
-    //verify the headers
+
+    // Verify the webhook signature
     await whook.verify(JSON.stringify(req.body), headers);
 
-    //getting data from the request body
     const { data, type } = req.body;
+
     const userData = {
-      _id: data.id,
-      email: data.email_addresses[0].email_address,
-      username: data.first_name + " " + data.last_name,
-      image: data.image_url,
+      clerkId: data.id, // save Clerk ID separately for future use
+      email: data.email_addresses?.[0]?.email_address || "",
+      username: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
+      image: data.image_url || "",
     };
-    //swithc case to handle different webhook types
+
     switch (type) {
       case "user.created": {
-        //create a new user in the database
-        await User.create(userData);
+        // Prevent duplicates based on Clerk ID
+        const existing = await User.findOne({ clerkId: data.id });
+        if (!existing) {
+          await User.create(userData);
+        }
+        break;
+      }
+      case "user.updated": {
+        await User.findOneAndUpdate({ clerkId: data.id }, userData, {
+          new: true,
+          upsert: true, // create if it doesn't exist
+        });
         break;
       }
       case "user.deleted": {
-        //delete the user from the database
-        await User.findByIdAndDelete(data._id);
+        await User.findOneAndDelete({ clerkId: data.id });
         break;
       }
-      case "user.updated":
-        //update the user in the database
-        await User.findByIdAndUpdate(data._id, userData);
-        break;
       default:
         console.log("Unhandled webhook type:", type);
         break;
     }
+
     res.json({
       message: "Webhook processed successfully",
       success: true,
     });
   } catch (error) {
-    console.error("Error clearing webhooks:", error);
+    console.error("Error handling Clerk webhook:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
