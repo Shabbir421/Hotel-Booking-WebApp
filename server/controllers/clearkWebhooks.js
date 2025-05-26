@@ -46,7 +46,7 @@ const clearkWebhooks = async (req, res) => {
     }
     res.json({
       message: "Webhook processed successfully",
-      sucess: true,
+      success: true,
     });
   } catch (error) {
     console.error("Error clearing webhooks:", error);

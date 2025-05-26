@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(clerkMiddleware());
 
 //! api to listen to webhooks cleark
-app.use("/api/cleark", clearkWebhooks);
+app.use("/api/clerk", clearkWebhooks);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
