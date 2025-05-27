@@ -3,10 +3,10 @@
 import User from "../models/user.model.js";
 import { Webhook } from "svix";
 
-const clearkWebhooks = async (req, res) => {
+const clerkWebhooks = async (req, res) => {
   try {
     // Create a new webhook instance with the Clerk secret
-    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET); // spelling fix
+    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
     const headers = {
       "svix-id": req.headers["svix-id"],
@@ -61,4 +61,4 @@ const clearkWebhooks = async (req, res) => {
   }
 };
 
-export default clearkWebhooks;
+export default clerkWebhooks;

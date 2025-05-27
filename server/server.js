@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import { clerkMiddleware } from "@clerk/express";
-import clearkWebhooks from "./controllers/clearkWebhooks.js";
+import clerkWebhooks from "./controllers/clerkWebhooks.js";
 dotenv.config();
 const app = express();
 
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(clerkMiddleware());
 
 //! api to listen to webhooks cleark
-app.use("/api/clerk", clearkWebhooks);
+app.use("/api/clerk", clerkWebhooks);
 
 app.get("/", (req, res) => {
   res.send("Hello, bhai!");
