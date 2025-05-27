@@ -1,6 +1,6 @@
 /** @format */
 
-import User from "../models/user.model.js";
+import User from "../models/User.js";
 import { Webhook } from "svix";
 
 const clerkWebhooks = async (req, res) => {
@@ -21,29 +21,23 @@ const clerkWebhooks = async (req, res) => {
 
     const userData = {
       clerkId: data.id, // save Clerk ID separately for future use
-      email: data.email_addresses?.[0]?.email_address || "",
-      username: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
-      image: data.image_url || "",
+      email: data.email_addresses[0].email_address,
+      username: data.first_name + " " + data.last_name,
+      image: data.image_url,
     };
 
     switch (type) {
       case "user.created": {
         // Prevent duplicates based on Clerk ID
-        const existing = await User.findOne({ clerkId: data.id });
-        if (!existing) {
-          await User.create(userData);
-        }
+        await User.create(userData);
         break;
       }
       case "user.updated": {
-        await User.findOneAndUpdate({ clerkId: data.id }, userData, {
-          new: true,
-          upsert: true, // create if it doesn't exist
-        });
+        await User.findOneAndUpdate(data.id, userData);
         break;
       }
       case "user.deleted": {
-        await User.findOneAndDelete({ clerkId: data.id });
+        await User.findOneAndDelete(data.id);
         break;
       }
       default:

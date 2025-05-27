@@ -37,8 +37,8 @@ function App() {
         <Route path="/rooms" element={<AllRooms />} />
         <Route path="/rooms/:id" element={<RoomDetails />} />
         <Route path="/my-bookings" element={<MyBookings />} />
-        <Route path="/about" element={<AboutUs />}/>
-        <Route path="/experience" element={<Experience />}/>
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/experience" element={<Experience />} />
         <Route path="/owner" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="add-room" element={<AddRoom />} />
