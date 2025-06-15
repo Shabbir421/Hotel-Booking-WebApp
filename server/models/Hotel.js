@@ -15,6 +15,12 @@ const hotelSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    owner: {
+      type: String,
+      ref: "User",
+      required: true,
+    },
+
     contact: {
       type: String,
       required: true,

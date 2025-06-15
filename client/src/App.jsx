@@ -12,7 +12,12 @@ import React from "react";
 import Navbar from "./components/Navbar";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
-import { SignIn } from "@clerk/clerk-react";
+import {
+  RedirectToSignIn,
+  SignedIn,
+  SignedOut,
+  SignIn,
+} from "@clerk/clerk-react";
 import AllRooms from "./pages/AllRooms";
 import Footer from "./components/Footer";
 import RoomDetails from "./pages/RoomDetails";
@@ -24,14 +29,18 @@ import AddRoom from "./pages/hotelOwner/AddRoom";
 import ListRoom from "./pages/hotelOwner/ListRoom";
 import AboutUs from "./pages/AboutUs";
 import Experience from "./pages/Experience";
+import { Toaster } from "react-hot-toast";
+import { useAppContext } from "./context/AppContext.jsx";
 
 function App() {
   const isOwnerPath = useLocation().pathname.startsWith("/owner");
+  const { showHotelRegister } = useAppContext();
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Toaster position="top-right" reverseOrder={false} />
       {!isOwnerPath && <Navbar />}
-      <HotelReg />
+      {showHotelRegister && <HotelReg />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/rooms" element={<AllRooms />} />
@@ -44,7 +53,6 @@ function App() {
           <Route path="add-room" element={<AddRoom />} />
           <Route path="list-room" element={<ListRoom />} />
         </Route>
-
         <Route
           path="/login"
           element={

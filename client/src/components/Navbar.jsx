@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   RiHomeSmile2Fill,
   RiSearchLine,
@@ -10,12 +10,13 @@ import {
   RiProfileFill,
 } from "react-icons/ri";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { useAppContext } from "../context/AppContext.jsx";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, navigate, isOwner, setShowHotelRegister } = useAppContext();
 
   const toggleMenu = () => setIsOpen(!isOpen);
-  const navigate = useNavigate();
 
   return (
     <nav className="sticky top-0 z-50  bg-white text-gray-800 shadow-md">
@@ -81,13 +82,24 @@ const Navbar = () => {
 
           {/* Special links with icons and button style */}
           <li>
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-1 px-3 py-1 rounded-md border border-gray-300 hover:bg-gray-100 transition">
-              <RiDashboardLine className="text-lg" />
-              Dashboard
-            </Link>
+            {user &&
+              (isOwner ? (
+                <Link
+                  to="/owner"
+                  className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-gray-100 transition">
+                  <RiDashboardLine className="text-lg" />
+                  Dashboard
+                </Link>
+              ) : (
+                <button
+                  onClick={() => setShowHotelRegister(true)}
+                  className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-gray-100 transition">
+                  <RiDashboardLine className="text-lg" />
+                  List Your Hotel
+                </button>
+              ))}
           </li>
+
           <li>
             <Link
               to="/search"
@@ -182,13 +194,22 @@ const Navbar = () => {
 
           {/* Special links with icons and button style */}
           <li>
-            <Link
-              to="/dashboard"
-              onClick={toggleMenu}
-              className="flex items-center gap-1 px-3 py-2 rounded-md">
-              <RiDashboardLine className="text-lg" />
-              Dashboard
-            </Link>
+            {user &&
+              (isOwner ? (
+                <Link
+                  to="/owner"
+                  className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-gray-100 transition">
+                  <RiDashboardLine className="text-lg" />
+                  Dashboard
+                </Link>
+              ) : (
+                <button
+                  onClick={() => setShowHotelRegister(true)}
+                  className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-gray-100 transition">
+                  <RiDashboardLine className="text-lg" />
+                  List Your Hotel
+                </button>
+              ))}
           </li>
 
           <li>

@@ -7,39 +7,37 @@ const userSchema = new mongoose.Schema(
     clerkId: {
       type: String,
       required: true,
-      unique: true,
     },
     username: {
       type: String,
       required: true,
-      trim: true,
-      minlength: 3,
     },
     email: {
       type: String,
       required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
     },
     image: {
       type: String,
-      required: true,
+    },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
     },
     role: {
       type: String,
-      enum: ["user", "hotelOwner", "admin"],
+      enum: ["user", "owner"],
       default: "user",
     },
     recentSearchedCities: [
       {
         type: String,
-        required: true,
       },
     ],
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("User", userSchema);
-export default User;
+const UserModel = mongoose.model("User", userSchema);
+export default UserModel;

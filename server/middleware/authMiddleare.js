@@ -1,41 +1,25 @@
-/** @format */
-
+import { getAuth } from "@clerk/express";
 import User from "../models/User.js";
 
 export const protect = async (req, res, next) => {
+  const auth = getAuth(req); // Properly get Clerk auth
+
+  if (!auth || !auth.userId) {
+    return res.status(401).json({ message: "Unauthorized - No Clerk session" });
+  }
+
   try {
-    // Check if auth object exists
-    if (!req.auth || !req.auth.clerkId) {
-      return res.status(401).json({
-        success: false,
-        message: "Authentication failed - No Clerk session found",
-      });
-    }
-
-    const { clerkId } = req.auth;
-
-    // Find user in database
-    const user = await User.findOne({ clerkId }).select("-__v");
+    // Find user in DB using Clerk ID
+    const user = await User.findOne({ clerkId: auth.userId }).select("-__v");
 
     if (!user) {
-      // Log the failed lookup attempt
-      console.error(`User lookup failed for clerkId: ${clerkId}`);
-      return res.status(404).json({
-        success: false,
-        message: "User not found in database. Please try logging in again.",
-        error: "USER_NOT_SYNCED",
-      });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Attach user to request object
     req.user = user;
     next();
   } catch (error) {
-    console.error("Auth middleware error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Authentication failed",
-      error: error.message,
-    });
+    console.error("Error in protect middleware:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

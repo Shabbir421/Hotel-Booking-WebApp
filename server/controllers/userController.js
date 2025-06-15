@@ -4,6 +4,9 @@
 
 export const getUserData = async (req, res) => {
   try {
+     if (!req.user) {
+      return res.status(401).json({ success: false, message: "User not authenticated" });
+    }
     const role = req.user.role;
     const recentSearchedCities = req.user.recentSearchedCities;
     res.json({

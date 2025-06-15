@@ -5,7 +5,6 @@ import { Webhook } from "svix";
 
 const clerkWebhooks = async (req, res) => {
   try {
-    // Create a new webhook instance with the Clerk secret
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
     const headers = {
@@ -19,27 +18,31 @@ const clerkWebhooks = async (req, res) => {
 
     const { data, type } = req.body;
 
-    const userData = {
-      clerkId: data.id, // save Clerk ID separately for future use
-      email: data.email_addresses[0].email_address,
-      username: data.first_name + " " + data.last_name,
-      image: data.image_url,
-    };
-
     switch (type) {
-      case "user.created": {
-        // Prevent duplicates based on Clerk ID
-        await User.create(userData);
-        break;
-      }
+      case "user.created":
       case "user.updated": {
-        await User.findOneAndUpdate(data.id, userData);
+        const userData = {
+          clerkId: data.id,
+          email: data.email_addresses[0]?.email_address || "",
+          username: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
+          image: data.image_url || "",
+          firstName: data.first_name || "",
+          lastName: data.last_name || "",
+        };
+
+        if (type === "user.created") {
+          await User.create(userData);
+        } else {
+          await User.findOneAndUpdate({ clerkId: data.id }, userData);
+        }
         break;
       }
+
       case "user.deleted": {
-        await User.findOneAndDelete(data.id);
+        await User.findOneAndDelete({ clerkId: data.id });
         break;
       }
+
       default:
         console.log("Unhandled webhook type:", type);
         break;

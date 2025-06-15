@@ -30,12 +30,10 @@ export const registerHotel = async (req, res) => {
 
     // Save the hotel to the database
     await User.findByIdAndUpdate(owner, {
-      role: "hotelOwner", // Update user role to hotelOwner
+      role: "owner", // Update user role to hotelOwner
     });
 
-    res
-      .status(201)
-      .json({ message: "Hotel registered successfully", hotel: newHotel });
+    res.status(201).json({ success: true, hotel: { name, address, contact, city } });
   } catch (error) {
     console.error("Error registering hotel:", error);
     res.status(500).json({ message: "Internal server error" });
